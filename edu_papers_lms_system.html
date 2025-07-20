@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduPapers.lk | පිවිසුම</title>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background: linear-gradient(120deg, #f0f0f0, #ffffff);
+      color: #333;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      background-color: #0055a5;
+      color: white;
+    }
+    header img {
+      height: 50px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 3rem auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      animation: fadeIn 1s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(20px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+    input, select, button {
+      width: 100%;
+      padding: 0.75rem;
+      margin-top: 1rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #0055a5;
+      color: white;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .language-switch {
+      text-align: right;
+      padding: 0 2rem;
+    }
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <img src="https://photos.app.goo.gl/36odpNSMJYBv84YQ9" alt="EduPapers.lk">
+    </div>
+    <div class="language-switch">
+      <select onchange="changeLanguage(this.value)">
+        <option value="si">සිංහල</option>
+        <option value="en">English</option>
+      </select>
+    </div>
+  </header>
+  <div class="container">
+    <h2 id="login-title">ගිණුමට පිවිසෙන්න</h2>
+    <button onclick="googleSignIn()">Google මඟින් පිවිසෙන්න</button>
+    <p id="note">ඔබගේ ගිණුමක් නැත්නම්, එය නවීනව සාදනු ලැබේ.</p>
+  </div>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyD6yXDHsOaqVplfhsXZV8nWvMuioDulwYg",
+      authDomain: "edu-login-4d05f.firebaseapp.com",
+      projectId: "edu-login-4d05f",
+      storageBucket: "edu-login-4d05f.firebasestorage.app",
+      messagingSenderId: "197092856272",
+      appId: "1:197092856272:web:a00b0169e46e7d5acca9d5",
+      measurementId: "G-TM21CT4GJ9"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    function googleSignIn() {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider).then((result) => {
+        const user = result.user;
+        db.collection("users").doc(user.uid).get().then(doc => {
+          if (!doc.exists) {
+            // Redirect to registration form
+            window.location.href = 'register.html';
+          } else {
+            // Redirect to dashboard
+            window.location.href = 'dashboard.html';
+          }
+        });
+      }).catch(error => alert(error.message));
+    }
+
+    function changeLanguage(lang) {
+      if(lang === 'si') {
+        document.getElementById('login-title').innerText = 'ගිණුමට පිවිසෙන්න';
+        document.getElementById('note').innerText = 'ඔබගේ ගිණුමක් නැත්නම්, එය නවීනව සාදනු ලැබේ.';
+      } else {
+        document.getElementById('login-title').innerText = 'Login to your account';
+        document.getElementById('note').innerText = 'If you do not have an account, it will be created automatically.';
+      }
+    }
+  </script>
+</body>
+</html>
